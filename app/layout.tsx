@@ -6,6 +6,7 @@ import Script from "next/script";
 import "./globals.css";
 import { CartProvider } from "@/lib/cart-context";
 import { AuthProvider } from "@/lib/auth-context";
+import { StoreProvider } from "@/lib/store-context";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/components/theme-provider";
 
@@ -49,12 +50,14 @@ export default function RootLayout({
       </head>
       <body className="font-sans antialiased" suppressHydrationWarning>
         <AuthProvider>
-          <CartProvider>
-            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-              {children}
-              <Toaster />
-            </ThemeProvider>
-          </CartProvider>
+          <StoreProvider>
+            <CartProvider>
+              <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                {children}
+                <Toaster />
+              </ThemeProvider>
+            </CartProvider>
+          </StoreProvider>
         </AuthProvider>
       </body>
     </html>

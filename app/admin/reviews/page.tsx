@@ -1,7 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
 import { useState } from "react";
 import { AdminLayout } from "@/components/admin/admin-layout";
 import { useStore } from "@/lib/store-context";
