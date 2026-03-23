@@ -1,12 +1,13 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 
-export default function CheckoutCancelPage() {
+function CheckoutCancelContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const orderId = searchParams.get("orderId");
@@ -20,11 +21,11 @@ export default function CheckoutCancelPage() {
             <div className="h-20 w-20 rounded-full bg-red-100 flex items-center justify-center mx-auto mb-6">
               <XCircle className="h-12 w-12 text-red-600" />
             </div>
-            
+
             <h1 className="text-3xl font-bold text-foreground mb-2">
               Payment Cancelled
             </h1>
-            
+
             <p className="text-muted-foreground mb-8">
               Your payment was cancelled. No charges have been made.
             </p>
@@ -33,7 +34,7 @@ export default function CheckoutCancelPage() {
               <div className="bg-secondary rounded-lg p-6 mb-8">
                 <p className="text-sm text-muted-foreground mb-1">Order ID</p>
                 <p className="font-bold text-lg text-foreground mb-4">{orderId}</p>
-                
+
                 <p className="text-xs text-muted-foreground">
                   Your order is still pending. You can try payment again.
                 </p>
@@ -62,5 +63,13 @@ export default function CheckoutCancelPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function CheckoutCancelPage() {
+  return (
+    <Suspense>
+      <CheckoutCancelContent />
+    </Suspense>
   );
 }

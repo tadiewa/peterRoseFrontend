@@ -227,7 +227,7 @@
 //###################################################################
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
@@ -258,7 +258,7 @@ const statusIcons: Record<string, React.ReactNode> = {
   "Ready for Collection": <Package className="h-5 w-5" />,
 };
 
-export default function TrackOrderPage() {
+function TrackOrderContent() {
   const searchParams = useSearchParams();
   const initialId = searchParams.get("id") || "";
   const [orderId, setOrderId] = useState(initialId);
@@ -477,5 +477,13 @@ export default function TrackOrderPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function TrackOrderPage() {
+  return (
+    <Suspense>
+      <TrackOrderContent />
+    </Suspense>
   );
 }
