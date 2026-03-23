@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react"; // ✅ Add useRef
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { useCart } from "@/lib/cart-context";
 
-export default function CheckoutSuccessPage() {
+function CheckoutSuccessContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { clearCart } = useCart();
@@ -16,12 +16,10 @@ export default function CheckoutSuccessPage() {
   const [error, setError] = useState<string | null>(null);
   const orderId = searchParams.get("orderId");
   const checkoutId = searchParams.get("checkoutId");
-  
-  // ✅ Prevent multiple calls
+
   const hasVerified = useRef(false);
 
   useEffect(() => {
-    // ✅ Only run once
     if (hasVerified.current) {
       return;
     }
@@ -37,7 +35,6 @@ export default function CheckoutSuccessPage() {
       try {
         console.log("Processing payment for order:", orderId);
 
-        // Check if payment already exists
         const checkResponse = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/payments/order/${orderId}`
         );
@@ -51,7 +48,6 @@ export default function CheckoutSuccessPage() {
 
         console.log("Payment doesn't exist yet, creating...");
 
-        // Create payment
         const response = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/api/payments/verify`,
           {
@@ -72,14 +68,14 @@ export default function CheckoutSuccessPage() {
         } else {
           const errorText = await response.text();
           console.error("❌ Error:", errorText);
-          
+
           let errorData: any = {};
           try {
             errorData = JSON.parse(errorText);
           } catch (e) {
             errorData = { message: errorText || "Payment verification failed" };
           }
-          
+
           setError(errorData.message || "Payment verification failed");
           setLoading(false);
         }
@@ -91,7 +87,7 @@ export default function CheckoutSuccessPage() {
     }
 
     handlePaymentSuccess();
-  }, []); // ✅ Empty deps - only run on mount
+  }, []);
 
   if (loading) {
     return (
@@ -143,11 +139,11 @@ export default function CheckoutSuccessPage() {
             <div className="h-20 w-20 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="h-12 w-12 text-green-600" />
             </div>
-            
+
             <h1 className="text-3xl font-bold text-foreground mb-2">
               Payment Successful!
             </h1>
-            
+
             <p className="text-muted-foreground mb-8">
               Your order has been confirmed and payment received.
             </p>
@@ -155,7 +151,7 @@ export default function CheckoutSuccessPage() {
             <div className="bg-secondary rounded-lg p-6 mb-8">
               <p className="text-sm text-muted-foreground mb-1">Order ID</p>
               <p className="font-bold text-lg text-foreground mb-4">{orderId}</p>
-              
+
               <p className="text-xs text-muted-foreground">
                 A confirmation email will be sent to your email address.
               </p>
@@ -183,5 +179,13 @@ export default function CheckoutSuccessPage() {
       </main>
       <Footer />
     </div>
+  );
+}
+
+export default function CheckoutSuccessPage() {
+  return (
+    <Suspense>
+      <CheckoutSuccessContent />
+    </Suspense>
   );
 }
